@@ -23,4 +23,4 @@ Note: for now, the map name is hardcoded into [Pawn.cs](code/Pawn.cs#L78).
 4. Launch the gamemode and press left click to load, and hold right click to raise the geometry above ground
 
 ## Footnotes
-HUGE thanks to the [hlbsp project](https://hlbsp.sourceforge.net/index.php?content=bspdef#edges) for documenting the structure of the HL1 BSP format
+HUGE thanks to the [hlbsp project](https://hlbsp.sourceforge.net/index.php?content=bspdef) for documenting the structure of the HL1 BSP format
