@@ -1,5 +1,5 @@
 # BSPHL
-BSPHL - BSP Hotloader for S&amp;box
+BSPHL - BSP HotLoader for S&amp;box
 
 ## Goals:
 This will be a way to open and enjoy Half-Life 1 maps in S&box natively.
