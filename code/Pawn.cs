@@ -33,6 +33,9 @@ partial class Pawn : AnimatedEntity
 
 	List<VECTOR3D> vertexList = new List<VECTOR3D>();
 	List<BSPEDGE> edgeList = new List<BSPEDGE>();
+	List<BSPSURFEDGE> surfEdgeList = new List<BSPSURFEDGE>();
+	List<BSPPLANE> planeList = new List<BSPPLANE>();
+	List<BSPFACE> faceList = new List<BSPFACE>();
 
 	public override void BuildInput()
 	{
@@ -81,6 +84,9 @@ partial class Pawn : AnimatedEntity
 
 			vertexList = new List<VECTOR3D>();
 			edgeList = new List<BSPEDGE>();
+			surfEdgeList = new List<BSPSURFEDGE>();
+			planeList = new List<BSPPLANE>();
+			faceList = new List<BSPFACE>();
 
 			// 113332 for snark_pit.bsp
 			long vertices_offset = BSPHeader.GetLump( LumpType.LUMP_VERTICES ).nOffset;
@@ -102,6 +108,33 @@ partial class Pawn : AnimatedEntity
 			{
 				BSPEDGE bspEdge = BSPEDGE.FromBytes(bytes, Convert.ToInt32( edges_offset) + (i * BSPEDGE.ByteSize));
 				edgeList.Add(bspEdge);
+			}
+
+			long surfedges_offset = BSPHeader.GetLump( LumpType.LUMP_SURFEDGES ).nOffset;
+			long surfedges_length = BSPHeader.GetLump( LumpType.LUMP_SURFEDGES ).nLength / BSPSURFEDGE.ByteSize;
+
+			for ( int i = 0; i < surfedges_length; i++ )
+			{
+				BSPSURFEDGE bspSurfEdge = BSPSURFEDGE.FromBytes( bytes, Convert.ToInt32( surfedges_offset ) + (i * BSPSURFEDGE.ByteSize) );
+				surfEdgeList.Add( bspSurfEdge );
+			}
+
+			long planes_offset = BSPHeader.GetLump( LumpType.LUMP_PLANES ).nOffset;
+			long planes_length = BSPHeader.GetLump( LumpType.LUMP_PLANES ).nLength / BSPPLANE.ByteSize;
+
+			for ( int i = 0; i < planes_length; i++ )
+			{
+				BSPPLANE bspPlane = BSPPLANE.FromBytes( bytes, Convert.ToInt32( planes_offset ) + (i * BSPPLANE.ByteSize) );
+				planeList.Add( bspPlane );
+			}
+
+			long faces_offset = BSPHeader.GetLump( LumpType.LUMP_FACES ).nOffset;
+			long faces_length = BSPHeader.GetLump( LumpType.LUMP_FACES ).nLength / BSPFACE.ByteSize;
+
+			for ( int i = 0; i < faces_length; i++ )
+			{
+				BSPFACE bspFace = BSPFACE.FromBytes( bytes, Convert.ToInt32( faces_offset ) + (i * BSPFACE.ByteSize) );
+				faceList.Add( bspFace );
 			}
 		}
 
