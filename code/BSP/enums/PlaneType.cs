@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Sandbox.BSP.enums
 {
-    public enum LumpPlaneTypes
+    public enum PlaneType
     {
-		PLANE_X,
+		PLANE_X,            // Plane is perpendicular to given axis
 		PLANE_Y,
 		PLANE_Z,
-		PLANE_ANYX,
+		PLANE_ANYX,         // Non-axial plane is snapped to the nearest
 		PLANE_ANYY,
 		PLANE_ANYZ
     }

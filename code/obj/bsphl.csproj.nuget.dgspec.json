@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\users\\sei\\documents\\s&box projects\\bsphl\\code\\bsphl.csproj": {}
+    "E:\\Projects\\GitHub\\BSPHL\\code\\bsphl.csproj": {}
   },
   "projects": {
-    "c:\\users\\sei\\documents\\s&box projects\\bsphl\\code\\bsphl.csproj": {
+    "D:\\SteamLibrary\\steamapps\\common\\sbox\\addons\\base\\code\\Base.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\users\\sei\\documents\\s&box projects\\bsphl\\code\\bsphl.csproj",
-        "projectName": "bsphl",
-        "projectPath": "c:\\users\\sei\\documents\\s&box projects\\bsphl\\code\\bsphl.csproj",
+        "projectUniqueName": "D:\\SteamLibrary\\steamapps\\common\\sbox\\addons\\base\\code\\Base.csproj",
+        "projectName": "Base",
+        "projectPath": "D:\\SteamLibrary\\steamapps\\common\\sbox\\addons\\base\\code\\Base.csproj",
         "packagesPath": "C:\\Users\\sei\\.nuget\\packages\\",
-        "outputPath": "c:\\users\\sei\\documents\\s&box projects\\bsphl\\code\\obj\\",
+        "outputPath": "D:\\SteamLibrary\\steamapps\\common\\sbox\\addons\\base\\code\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\sei\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -27,11 +27,7 @@
         "frameworks": {
           "net7.0": {
             "targetAlias": "net7.0",
-            "projectReferences": {
-              "D:\\SteamLibrary\\steamapps\\common\\sbox\\addons\\base\\code\\Base.csproj": {
-                "projectPath": "D:\\SteamLibrary\\steamapps\\common\\sbox\\addons\\base\\code\\Base.csproj"
-              }
-            }
+            "projectReferences": {}
           }
         },
         "warningProperties": {
@@ -63,14 +59,14 @@
         }
       }
     },
-    "D:\\SteamLibrary\\steamapps\\common\\sbox\\addons\\base\\code\\Base.csproj": {
+    "E:\\Projects\\GitHub\\BSPHL\\code\\bsphl.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\SteamLibrary\\steamapps\\common\\sbox\\addons\\base\\code\\Base.csproj",
-        "projectName": "Base",
-        "projectPath": "D:\\SteamLibrary\\steamapps\\common\\sbox\\addons\\base\\code\\Base.csproj",
+        "projectUniqueName": "E:\\Projects\\GitHub\\BSPHL\\code\\bsphl.csproj",
+        "projectName": "bsphl",
+        "projectPath": "E:\\Projects\\GitHub\\BSPHL\\code\\bsphl.csproj",
         "packagesPath": "C:\\Users\\sei\\.nuget\\packages\\",
-        "outputPath": "D:\\SteamLibrary\\steamapps\\common\\sbox\\addons\\base\\code\\obj\\",
+        "outputPath": "E:\\Projects\\GitHub\\BSPHL\\code\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\sei\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -86,7 +82,11 @@
         "frameworks": {
           "net7.0": {
             "targetAlias": "net7.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "D:\\SteamLibrary\\steamapps\\common\\sbox\\addons\\base\\code\\Base.csproj": {
+                "projectPath": "D:\\SteamLibrary\\steamapps\\common\\sbox\\addons\\base\\code\\Base.csproj"
+              }
+            }
           }
         },
         "warningProperties": {

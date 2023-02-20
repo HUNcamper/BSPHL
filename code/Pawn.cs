@@ -75,7 +75,7 @@ partial class Pawn : AnimatedEntity
 		// If we're running serverside and Attack1 was just pressed, spawn a ragdoll
 		if ( Game.IsServer && Input.Pressed( InputButton.PrimaryAttack ) )
 		{			
-			byte[] bytes = FileSystem.Data.ReadAllBytes("snark_pit.bsp").ToArray();
+			byte[] bytes = FileSystem.Data.ReadAllBytes("c1a0.bsp").ToArray();
 
 			BSPHEADER BSPHeader = BSPHEADER.FromBytes( bytes, 0 );
 
@@ -115,7 +115,7 @@ partial class Pawn : AnimatedEntity
 
 		foreach ( VECTOR3D vertex in vertexList )
 		{
-			DebugOverlay.Sphere( vertex.GetVector3(), 1, Color.Red );
+			// DebugOverlay.Sphere( vertex.GetVector3(), 1, Color.Red );
 		}
 
 		foreach ( BSPEDGE bspEdge in edgeList )
