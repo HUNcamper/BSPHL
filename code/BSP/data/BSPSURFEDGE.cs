@@ -20,7 +20,7 @@ namespace Sandbox.BSP.data
 		// If the value of the surfedge is positive,
 		// the first vertex of the edge is used as vertex for rendering the face,
 		// otherwise, the value is multiplied by -1 and the second vertex of the indexed edge is used. 
-		public int GetVertexIndex( BSPEDGE[] edgeList )
+		public int GetVertexIndex( List<BSPEDGE> edgeList )
 		{
 			if (value > 0)
 			{
