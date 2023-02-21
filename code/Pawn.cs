@@ -136,6 +136,10 @@ partial class Pawn : AnimatedEntity
 				BSPFACE bspFace = BSPFACE.FromBytes( bytes, Convert.ToInt32( faces_offset ) + (i * BSPFACE.ByteSize) );
 				faceList.Add( bspFace );
 			}
+
+			BSPEntity bspEntity = new BSPEntity(faceList, surfEdgeList, edgeList, vertexList);
+			bspEntity.Position = Position;
+			bspEntity.Spawn();
 		}
 
 		if ( Game.IsServer && Input.Down( InputButton.SecondaryAttack ) )

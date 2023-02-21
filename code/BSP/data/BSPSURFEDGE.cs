@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sandbox.BSP.data
 {
-	internal class BSPSURFEDGE
+	public class BSPSURFEDGE
 	{
 		public static int ByteSize = 4;
 
