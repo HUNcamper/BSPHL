@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sandbox
 {
-	public partial class BSPEntity : ModelEntity
+	public partial class BSPEntity : RenderEntity
 	{
 		[Net] public Material Material { get; set; }
 
@@ -15,6 +15,7 @@ namespace Sandbox
 		public List<BSPSURFEDGE> surfEdgeList;
 		public List<BSPEDGE> edgeList;
 		public List<VECTOR3D> vertexList;
+		public VertexBuffer vertexBuffer;
 
 		public BSPEntity() { }
 
@@ -25,27 +26,29 @@ namespace Sandbox
 			this.edgeList = edgeList;
 			this.vertexList = vertexList;
 
-			Material = Material.Load( "materials/glass/glass_a.vmat" );
-			Model = GetModel();
+			Material = Material.Load( "materials/shiny_white.vmat" );
+			GetMesh();
+			// Model = GetModel();
 		}
 
-		public Model GetModel()
+		/* public Model GetModel()
 		{
 			var modelBuilder = new ModelBuilder();
 
 			modelBuilder.AddMesh( GetMesh() );
 
 			return modelBuilder.Create();
-		}
+		} */
 
-		public Mesh GetMesh()
+		public void GetMesh()
 		{
 			// var vertices = new BSPVertex[vertexList.Count];
 			// var indices = new int[vertexList.Count];
 
-			Mesh mesh = new Mesh( Material );
-			VertexBuffer vertexBuffer = new VertexBuffer();
+			// Mesh mesh = new Mesh( Material );
+			vertexBuffer = new VertexBuffer();
 			vertexBuffer.Init( true );
+			int counter = 0;
 			foreach ( BSPFACE face in faceList )
 			{
 				// Log.Info( "Adding vertex" );
@@ -53,11 +56,19 @@ namespace Sandbox
 				{
 					int vertexIndex = surfEdgeList[Convert.ToInt32( face.iFirstEdge ) + i].GetVertexIndex( edgeList );
 					Vector3 vertexPos = vertexList[vertexIndex].GetVector3();
+					vertexPos += Position;
 					Vertex vert = new Vertex( vertexPos, new Vector4(), Color.Red );
+					// Vertex vert = new Vertex( new Vector3(i*1000, i*1000, i*1000), new Vector4(), Color.Red );
+					vertexBuffer.AddRawIndex( i );
+					// Log.Info( vert.Position );
 
 					vertexBuffer.Add( vert );
 				}
-				break;
+
+				if (counter++ > 100)
+				{
+					break;
+				}
 
 				//int vertexIndex1 = surfEdgeList[Convert.ToInt32( face.iFirstEdge )].GetVertexIndex( edgeList );
 				//Vector3 vertexPos1 = vertexList[vertexIndex1].GetVector3();
@@ -81,8 +92,34 @@ namespace Sandbox
 				// BSPVertex bSPVertex = new BSPVertex();
 				// mesh.CreateVertexBuffer<BSPVertex>( vertexBuffer );
 			}
-			mesh.CreateBuffers( vertexBuffer );
-			return mesh;
+			// mesh.CreateBuffers( vertexBuffer );
+			// return mesh;
+			Log.Info( vertexBuffer );
+		}
+
+		public override void DoRender( SceneObject obj )
+		{
+			Render();
+		}
+
+		public void Render()
+		{
+			DebugOverlay.Text( $"WORLD", Position, 0f );
+
+			// Graphics.Attributes.Set( "TextureLightmap", lightmap );
+			// Graphics.Attributes.Set( "Opacity", 1.0 );
+
+			Log.Info( vertexBuffer );
+			Log.Info( Material );
+			vertexBuffer.Draw( Material.Load( "materials/shiny_white.vmat" ) );
+
+			// for ( var i = 0; i < vertexBufferCount; i++ )
+			// {
+			// 	var vertices = vertexBuffer[i];
+			// 	Graphics.Attributes.Set( "TextureDiffuse", vertices.Item2 );
+			// 	vertices.Item1.Draw( renderMat );
+			// }
+			// DebugOverlay.Box( Mins, Maxs, Color.Red );
 		}
 	}
 }
