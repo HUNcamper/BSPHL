@@ -59,7 +59,7 @@ namespace Sandbox
 					vertexPos += Position;
 					Vertex vert = new Vertex( vertexPos, new Vector4(), Color.Red );
 					// Vertex vert = new Vertex( new Vector3(i*1000, i*1000, i*1000), new Vector4(), Color.Red );
-					vertexBuffer.AddRawIndex( i );
+					vertexBuffer.AddIndex( counter++ );
 					// Log.Info( vert.Position );
 
 					vertexBuffer.Add( vert );
