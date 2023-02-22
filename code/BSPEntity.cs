@@ -3,19 +3,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sandbox
 {
-	public partial class BSPEntity : RenderEntity
+	public partial class BSPEntity : ModelEntity
 	{
-		[Net] public Material Material { get; set; }
+		// [Net] public Material Material { get; set; }
 
 		public List<BSPFACE> faceList;
 		public List<BSPSURFEDGE> surfEdgeList;
 		public List<BSPEDGE> edgeList;
 		public List<VECTOR3D> vertexList;
-		public VertexBuffer vertexBuffer;
+		public List<FaceMesh> faceMeshList;
 
 		public BSPEntity() { }
 
@@ -26,9 +27,12 @@ namespace Sandbox
 			this.edgeList = edgeList;
 			this.vertexList = vertexList;
 
-			Material = Material.Load( "materials/shiny_white.vmat" );
-			GetMesh();
+			this.faceMeshList = new();
+
+			// Material = Material.Load( "materials/shiny_white.vmat" );
 			// Model = GetModel();
+			Model = GenerateModel();
+			EnableDrawing = true;
 		}
 
 		/* public Model GetModel()
@@ -40,45 +44,108 @@ namespace Sandbox
 			return modelBuilder.Create();
 		} */
 
-		public void GetMesh()
+		public struct FaceMesh
 		{
-			vertexBuffer = new VertexBuffer();
-			vertexBuffer.Init( true );
+			public List<Vertex> vertices;
+			public List<int> indices;
+		}
+
+		public Model GenerateModel()
+		{
+			// VertexBuffer vertexBuffer = new VertexBuffer();
+			// vertexBuffer.Init( true );
 
 			int baseVertex = 0;
 
-			List<int> renderIndicesList = new();
-
 			foreach ( BSPFACE face in faceList )
 			{
+				List<int> renderIndicesList = new();
+				List<Vertex> renderVertexList = new();
+
+				int dst_temp = 0;
 				for ( int i = 0; i < face.nEdges - 2; i++ )
 				{
-					renderIndicesList.Add( baseVertex + 0 );
-					renderIndicesList.Add( baseVertex + i + 1 );
-					renderIndicesList.Add( baseVertex + i + 2 );
+					renderIndicesList.Insert( dst_temp++, 0 );
+					renderIndicesList.Insert( dst_temp++, i + 1 );
+					renderIndicesList.Insert( dst_temp++, i + 2 );
 				}
+
+				// Log.Info( $"Expected index count: {(face.nEdges - 2) * 3}" );
+				// Log.Info( $"Got: {renderIndicesList.Count}" );
+
+				renderIndicesList.Reverse();
+
+				for ( int i = 0; i < face.nEdges; i++ )
+				{
+					int vertexIndex = surfEdgeList[Convert.ToInt32( face.iFirstEdge ) + i].GetVertexIndex( edgeList );
+					Vector3 vertexPos = vertexList[vertexIndex].GetVector3();
+					// vertexPos += Position;
+					Vertex vert = new Vertex( vertexPos, Vector3.Zero, Vector3.Left, Vector4.One );
+
+					renderVertexList.Add( vert );
+				}
+
+				FaceMesh faceMesh = new()
+				{
+					vertices = renderVertexList,
+					indices = renderIndicesList
+				};
+
+				faceMeshList.Add( faceMesh );
 
 				baseVertex += face.nEdges;
 			}
 
 			// renderIndicesList.Reverse();
 
-			List<Vertex> renderVertexList = new();
+			var modelBuilder = Model.Builder;
 
-			foreach ( BSPFACE face in faceList )
+			foreach ( FaceMesh faceMesh in faceMeshList )
 			{
-				for ( int i = 0; i < face.nEdges; i++ )
-				{
-					int vertexIndex = surfEdgeList[Convert.ToInt32( face.iFirstEdge ) + i].GetVertexIndex( edgeList );
-					Vector3 vertexPos = vertexList[vertexIndex].GetVector3();
-					vertexPos += Position;
-					Vertex vert = new Vertex( vertexPos, Vector3.Zero, Vector3.Left, new Vector4() );
+				// Log.Info( "Drawing mesh: " );
+				// Log.Info( $"Vertex count: {faceMesh.vertices.Count}" );
+				// Log.Info( $"Index count: {faceMesh.indices.Count}" );
+				Mesh mesh = new();
+				mesh.CreateVertexBuffer( faceMesh.vertices.Count, Vertex.Layout, faceMesh.vertices );
+				mesh.CreateIndexBuffer( faceMesh.indices.Count, faceMesh.indices.ToArray() );
 
-					renderVertexList.Add( vert );
-				}
+				modelBuilder.AddMesh( mesh );
+				// break;
+
+				// if (counter++ > 10)
+				// {
+				// 	break;
+				// }
 			}
 
-			int counter = 0;
+			Model createdModel = modelBuilder.Create();
+
+			Log.Info( createdModel.MeshCount );
+			Log.Info( createdModel.IsError );
+			Log.Info( createdModel.IsProcedural );
+
+			return createdModel;
+
+			/*int count = 0;
+			for ( int i = 0; i < renderVertexList.Count; i++ )
+			{
+				Vertex vert = renderVertexList[i];
+				int index = renderIndicesList[i];
+
+				vertexBuffer.Add( vert );
+				vertexBuffer.AddRawIndex( index );
+
+				if (count++ > 600)
+				{
+					count = 0;
+					vertexBuffers.Add( vertexBuffer );
+
+					vertexBuffer = new VertexBuffer();
+					vertexBuffer.Init( true );
+				}
+			}*/
+
+			/* int counter = 0;
 			foreach ( Vertex vert in renderVertexList )
 			{
 				vertexBuffer.Add( new( vert.Position, vert.Normal, vert.Tangent, new Vector4() ) );
@@ -96,13 +163,13 @@ namespace Sandbox
 				{
 					break;
 				}
-			}
+			} */
 		}
 
-		public override void DoRender( SceneObject obj )
+		/*public override void DoRender( SceneObject obj )
 		{
 			Render();
-		}
+		}*/
 
 		public void Render()
 		{
@@ -113,7 +180,7 @@ namespace Sandbox
 
 			// Log.Info( vertexBuffer );
 			// Log.Info( Material );
-			vertexBuffer.Draw( Material.Load( "materials/shiny_white.vmat" ) );
+			// vertexBuffer.Draw( Material.Load( "materials/shiny_white.vmat" ) );
 
 			// for ( var i = 0; i < vertexBufferCount; i++ )
 			// {
@@ -122,6 +189,11 @@ namespace Sandbox
 			// 	vertices.Item1.Draw( renderMat );
 			// }
 			// DebugOverlay.Box( Mins, Maxs, Color.Red );
+
+			// foreach ( VertexBuffer vertexBuffer in vertexBuffers )
+			// {
+			// 	vertexBuffer.Draw( Material.Load( "materials/shiny_white.vmat" ) );
+			// }
 		}
 	}
 }

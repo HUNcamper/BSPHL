@@ -76,7 +76,7 @@ partial class Pawn : AnimatedEntity
 		}
 
 		// If we're running serverside and Attack1 was just pressed, spawn a ragdoll
-		if ( Game.IsClient && Input.Pressed( InputButton.PrimaryAttack ) )
+		if ( !Game.IsServer && Input.Pressed( InputButton.PrimaryAttack ) )
 		{			
 			byte[] bytes = FileSystem.Data.ReadAllBytes("c1a0.bsp").ToArray();
 
