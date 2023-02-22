@@ -42,59 +42,61 @@ namespace Sandbox
 
 		public void GetMesh()
 		{
-			// var vertices = new BSPVertex[vertexList.Count];
-			// var indices = new int[vertexList.Count];
-
-			// Mesh mesh = new Mesh( Material );
 			vertexBuffer = new VertexBuffer();
 			vertexBuffer.Init( true );
-			int counter = 0;
+
+			int baseVertex = 0;
+
+			List<int> renderIndicesList = new();
+
 			foreach ( BSPFACE face in faceList )
 			{
-				// Log.Info( "Adding vertex" );
+				for ( int i = 0; i < face.nEdges - 2; i++ )
+				{
+					renderIndicesList.Add( baseVertex + 0 );
+					renderIndicesList.Add( baseVertex + i + 1 );
+					renderIndicesList.Add( baseVertex + i + 2 );
+				}
+
+				baseVertex += face.nEdges;
+			}
+
+			// renderIndicesList.Reverse();
+
+			List<Vertex> renderVertexList = new();
+
+			foreach ( BSPFACE face in faceList )
+			{
 				for ( int i = 0; i < face.nEdges; i++ )
 				{
 					int vertexIndex = surfEdgeList[Convert.ToInt32( face.iFirstEdge ) + i].GetVertexIndex( edgeList );
 					Vector3 vertexPos = vertexList[vertexIndex].GetVector3();
 					vertexPos += Position;
-					Vertex vert = new Vertex( vertexPos, new Vector4(), Color.Red );
-					// Vertex vert = new Vertex( new Vector3(i*1000, i*1000, i*1000), new Vector4(), Color.Red );
-					vertexBuffer.AddIndex( counter++ );
-					// Log.Info( vert.Position );
+					Vertex vert = new Vertex( vertexPos, Vector3.Zero, Vector3.Left, new Vector4() );
 
-					vertexBuffer.Add( vert );
+					renderVertexList.Add( vert );
 				}
+			}
 
-				if (counter++ > 100)
+			int counter = 0;
+			foreach ( Vertex vert in renderVertexList )
+			{
+				vertexBuffer.Add( new( vert.Position, vert.Normal, vert.Tangent, new Vector4() ) );
+				if (counter++ > 700)
 				{
 					break;
 				}
-
-				//int vertexIndex1 = surfEdgeList[Convert.ToInt32( face.iFirstEdge )].GetVertexIndex( edgeList );
-				//Vector3 vertexPos1 = vertexList[vertexIndex1].GetVector3();
-				//Vertex vert1 = new Vertex( vertexPos1, new Vector4( 0, 0, 0, 0 ), Color32.White );
-
-				//int vertexIndex2 = surfEdgeList[Convert.ToInt32( face.iFirstEdge ) + 1].GetVertexIndex( edgeList );
-				//Vector3 vertexPos2 = vertexList[vertexIndex2].GetVector3();
-				//Vertex vert2 = new Vertex( vertexPos2, new Vector4( 0, 0, 0, 0 ), Color32.White );
-
-				//int vertexIndex3 = surfEdgeList[Convert.ToInt32( face.iFirstEdge ) + 2].GetVertexIndex( edgeList );
-				//Vector3 vertexPos3 = vertexList[vertexIndex3].GetVector3();
-				//Vertex vert3 = new Vertex( vertexPos3, new Vector4( 0, 0, 0, 0 ), Color32.White );
-
-				//int vertexIndex4 = surfEdgeList[Convert.ToInt32( face.iFirstEdge ) + 3].GetVertexIndex( edgeList );
-				//Vector3 vertexPos4 = vertexList[vertexIndex4].GetVector3();
-				//Vertex vert4 = new Vertex( vertexPos4, new Vector4( 0, 0, 0, 0 ), Color32.White );
-
-				// vertexBuffer.AddQuad( vert1, vert2, vert3, vert4 );
-
-				// vertexBuffer.AddQuad( vert1, vert2, vert3, vert4 );
-				// BSPVertex bSPVertex = new BSPVertex();
-				// mesh.CreateVertexBuffer<BSPVertex>( vertexBuffer );
 			}
-			// mesh.CreateBuffers( vertexBuffer );
-			// return mesh;
-			Log.Info( vertexBuffer );
+
+			counter = 0;
+			foreach ( int index in renderIndicesList )
+			{
+				vertexBuffer.AddRawIndex( index );
+				if ( counter++ > 700 )
+				{
+					break;
+				}
+			}
 		}
 
 		public override void DoRender( SceneObject obj )
@@ -109,8 +111,8 @@ namespace Sandbox
 			// Graphics.Attributes.Set( "TextureLightmap", lightmap );
 			// Graphics.Attributes.Set( "Opacity", 1.0 );
 
-			Log.Info( vertexBuffer );
-			Log.Info( Material );
+			// Log.Info( vertexBuffer );
+			// Log.Info( Material );
 			vertexBuffer.Draw( Material.Load( "materials/shiny_white.vmat" ) );
 
 			// for ( var i = 0; i < vertexBufferCount; i++ )
