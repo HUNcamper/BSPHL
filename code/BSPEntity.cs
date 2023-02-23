@@ -10,7 +10,7 @@ namespace Sandbox
 {
 	public partial class BSPEntity : RenderEntity
 	{
-		// [Net] public Material Material { get; set; }
+		public Material Material { get; set; }
 
 		public List<BSPFACE> faceList;
 		public List<BSPSURFEDGE> surfEdgeList;
@@ -30,7 +30,7 @@ namespace Sandbox
 
 			this.faceMeshList = new();
 
-			// Material = Material.Load( "materials/shiny_white.vmat" );
+			Material = Material.Load( "materials/dev/debug_physics.vmat" );
 			// Model = GetModel();
 			// Model = GenerateModel();
 			// EnableDrawing = true;
@@ -205,7 +205,7 @@ namespace Sandbox
 
 			foreach ( VertexBuffer vertexBuffer in vertexBufferList )
 			{
-				vertexBuffer.Draw( Material.Load( "materials/3_rock.vmat" ) );
+				vertexBuffer.Draw( Material );
 			}
 		}
 	}
