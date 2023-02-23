@@ -10,11 +10,11 @@ namespace Sandbox.BSP
 {
 	public class BSPParser
 	{
-		List<VECTOR3D> vertexList = new();
-		List<BSPEDGE> edgeList = new();
-		List<BSPSURFEDGE> surfEdgeList = new();
-		List<BSPPLANE> planeList = new();
-		List<BSPFACE> faceList = new();
+		public List<VECTOR3D> vertexList = new();
+		public List<BSPEDGE> edgeList = new();
+		public List<BSPSURFEDGE> surfEdgeList = new();
+		public List<BSPPLANE> planeList = new();
+		public List<BSPFACE> faceList = new();
 
 		public static BSPMapEntity CreateMapEntity(string filename)
 		{
