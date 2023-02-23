@@ -7,7 +7,7 @@ using Sandbox.BSP.enums;
 
 namespace Sandbox.BSP.data
 {
-	internal class BSPPLANE : BSPData
+	public class BSPPLANE : BSPData
 	{
 		public static int ByteSize = VECTOR3D.ByteSize + 4 + 4;
 
