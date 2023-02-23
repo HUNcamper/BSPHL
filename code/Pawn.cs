@@ -82,15 +82,13 @@ partial class Pawn : AnimatedEntity
 
 			BSPHEADER BSPHeader = BSPHEADER.FromBytes( bytes, 0 );
 
-			vertexList = new List<VECTOR3D>();
-			edgeList = new List<BSPEDGE>();
-			surfEdgeList = new List<BSPSURFEDGE>();
-			planeList = new List<BSPPLANE>();
-			faceList = new List<BSPFACE>();
+			vertexList = new();
+			edgeList = new();
+			surfEdgeList = new();
+			planeList = new();
+			faceList = new();
 
-			// 113332 for snark_pit.bsp
 			long vertices_offset = BSPHeader.GetLump( LumpType.LUMP_VERTICES ).nOffset;
-			// 3812 for snark_pit.bsp
 			long vertices_length = BSPHeader.GetLump( LumpType.LUMP_VERTICES ).nLength / VECTOR3D.ByteSize;
 
 			for (int i = 0; i < vertices_length; i++)
@@ -99,9 +97,7 @@ partial class Pawn : AnimatedEntity
 				vertexList.Add(vector3d);
 			}
 
-			// 380464 for snark_pit.bsp
 			long edges_offset = BSPHeader.GetLump( LumpType.LUMP_EDGES ).nOffset;
-			// 3365 for snark_pit.bsp
 			long edges_length = BSPHeader.GetLump( LumpType.LUMP_EDGES ).nLength / BSPEDGE.ByteSize;
 
 			for ( int i = 0; i < edges_length; i++ )
@@ -137,17 +133,17 @@ partial class Pawn : AnimatedEntity
 				faceList.Add( bspFace );
 			}
 
-			BSPEntity bspEntity = new BSPEntity(faceList, surfEdgeList, edgeList, vertexList);
-			bspEntity.Position = Position;
-			bspEntity.Spawn();
-		}
-
-		if ( Game.IsServer && Input.Down( InputButton.SecondaryAttack ) )
-		{
-			foreach ( VECTOR3D vertex in vertexList )
+			BSPEntity bspEntity = new()
 			{
-				vertex.z += 1;
-			}
+				FaceList = faceList,
+				SurfEdgeList = surfEdgeList,
+				EdgeList = edgeList,
+				VertexList = vertexList,
+				Position = Position
+			};
+
+			bspEntity.Load();
+			bspEntity.Spawn();
 		}
 	}
 

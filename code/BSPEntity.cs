@@ -12,29 +12,36 @@ namespace Sandbox
 	{
 		public Material Material { get; set; }
 
-		private readonly List<BSPFACE> faceList;
-		private readonly List<BSPSURFEDGE> surfEdgeList;
-		private readonly List<BSPEDGE> edgeList;
-		private readonly List<VECTOR3D> vertexList;
+		[HideInEditor]
+		public List<BSPFACE> FaceList { get; set; }
+
+		[HideInEditor]
+		public List<BSPSURFEDGE> SurfEdgeList { get; set; }
+
+		[HideInEditor]
+		public List<BSPEDGE> EdgeList { get; set; }
+
+		[HideInEditor]
+		public List<VECTOR3D> VertexList { get; set; }
+
 		private List<VertexBuffer> vertexBufferList;
 
-		public BSPEntity( List<BSPFACE> faceList, List<BSPSURFEDGE> surfEdgeList, List<BSPEDGE> edgeList, List<VECTOR3D> vertexList )
+		public BSPEntity()
 		{
-			this.faceList = faceList;
-			this.surfEdgeList = surfEdgeList;
-			this.edgeList = edgeList;
-			this.vertexList = vertexList;
 			this.vertexBufferList = new();
 
 			RenderBounds = new BBox( Position, 5000f );
 			Material = Material.Load( "materials/dev/debug_physics.vmat" );
+		}
 
+		public void Load()
+		{
 			GenerateVertexBuffers();
 		}
 
-		public void GenerateVertexBuffers()
+		private void GenerateVertexBuffers()
 		{
-			foreach ( BSPFACE face in faceList )
+			foreach ( BSPFACE face in FaceList )
 			{
 				VertexBuffer vertexBuffer = new();
 				vertexBuffer.Init( true );
@@ -49,8 +56,8 @@ namespace Sandbox
 				for ( int i = 0; i < face.nEdges; i++ )
 				{
 					int edgeIndex = Convert.ToInt32(face.iFirstEdge) + i;
-					int vertexIndex = surfEdgeList[edgeIndex].GetVertexIndex( edgeList );
-					Vector3 vertexPos = vertexList[vertexIndex].GetVector3();
+					int vertexIndex = SurfEdgeList[edgeIndex].GetVertexIndex( EdgeList );
+					Vector3 vertexPos = VertexList[vertexIndex].GetVector3();
 
 					vertexBuffer.Add( new( vertexPos, Vector3.Zero, Vector3.Left, Vector4.One ) );
 				}
