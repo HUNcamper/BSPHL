@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Sandbox
 {
-	public partial class BSPEntity : ModelEntity
+	public partial class BSPEntity : RenderEntity
 	{
 		// [Net] public Material Material { get; set; }
 
@@ -17,6 +17,7 @@ namespace Sandbox
 		public List<BSPEDGE> edgeList;
 		public List<VECTOR3D> vertexList;
 		public List<FaceMesh> faceMeshList;
+		public List<VertexBuffer> vertexBufferList = new();
 
 		public BSPEntity() { }
 
@@ -31,8 +32,9 @@ namespace Sandbox
 
 			// Material = Material.Load( "materials/shiny_white.vmat" );
 			// Model = GetModel();
-			Model = GenerateModel();
-			EnableDrawing = true;
+			// Model = GenerateModel();
+			// EnableDrawing = true;
+			GenerateModel();
 		}
 
 		/* public Model GetModel()
@@ -61,6 +63,8 @@ namespace Sandbox
 			{
 				List<int> renderIndicesList = new();
 				List<Vertex> renderVertexList = new();
+				VertexBuffer vertexBuffer = new();
+				vertexBuffer.Init( true );
 
 				int dst_temp = 0;
 				for ( int i = 0; i < face.nEdges - 2; i++ )
@@ -75,6 +79,11 @@ namespace Sandbox
 
 				renderIndicesList.Reverse();
 
+				foreach ( int index in renderIndicesList )
+				{
+					vertexBuffer.AddRawIndex( index );
+				}
+
 				for ( int i = 0; i < face.nEdges; i++ )
 				{
 					int vertexIndex = surfEdgeList[Convert.ToInt32( face.iFirstEdge ) + i].GetVertexIndex( edgeList );
@@ -83,6 +92,7 @@ namespace Sandbox
 					Vertex vert = new Vertex( vertexPos, Vector3.Zero, Vector3.Left, Vector4.One );
 
 					renderVertexList.Add( vert );
+					vertexBuffer.Add( vert );
 				}
 
 				FaceMesh faceMesh = new()
@@ -90,6 +100,9 @@ namespace Sandbox
 					vertices = renderVertexList,
 					indices = renderIndicesList
 				};
+
+				vertexBufferList.Add( vertexBuffer );
+
 
 				faceMeshList.Add( faceMesh );
 
@@ -166,10 +179,10 @@ namespace Sandbox
 			} */
 		}
 
-		/*public override void DoRender( SceneObject obj )
+		public override void DoRender( SceneObject obj )
 		{
 			Render();
-		}*/
+		}
 
 		public void Render()
 		{
@@ -190,10 +203,10 @@ namespace Sandbox
 			// }
 			// DebugOverlay.Box( Mins, Maxs, Color.Red );
 
-			// foreach ( VertexBuffer vertexBuffer in vertexBuffers )
-			// {
-			// 	vertexBuffer.Draw( Material.Load( "materials/shiny_white.vmat" ) );
-			// }
+			foreach ( VertexBuffer vertexBuffer in vertexBufferList )
+			{
+				vertexBuffer.Draw( Material.Load( "materials/3_rock.vmat" ) );
+			}
 		}
 	}
 }
