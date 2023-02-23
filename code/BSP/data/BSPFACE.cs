@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sandbox.BSP.data
 {
-	internal class BSPFACE
+	public class BSPFACE
 	{
 		public static int ByteSize = 2 + 2 + 4 + 2 + 2 + (1 * 4) + 4;
 

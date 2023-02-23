@@ -1,10 +1,10 @@
-﻿using Sandbox;
-using System;
+﻿using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Sandbox.BSP.data;
 using System.Collections.Generic;
 using Sandbox.BSP.enums;
+using Sandbox.BSP;
 
 namespace Sandbox;
 
@@ -30,12 +30,6 @@ partial class Pawn : AnimatedEntity
 	// An example BuildInput method within a player's Pawn class.
 	[ClientInput] public Vector3 InputDirection { get; protected set; }
 	[ClientInput] public Angles ViewAngles { get; set; }
-
-	List<VECTOR3D> vertexList = new List<VECTOR3D>();
-	List<BSPEDGE> edgeList = new List<BSPEDGE>();
-	List<BSPSURFEDGE> surfEdgeList = new List<BSPSURFEDGE>();
-	List<BSPPLANE> planeList = new List<BSPPLANE>();
-	List<BSPFACE> faceList = new List<BSPFACE>();
 
 	public override void BuildInput()
 	{
@@ -76,90 +70,12 @@ partial class Pawn : AnimatedEntity
 		}
 
 		// If we're running serverside and Attack1 was just pressed, spawn a ragdoll
-		if ( Game.IsServer && Input.Pressed( InputButton.PrimaryAttack ) )
-		{			
-			byte[] bytes = FileSystem.Data.ReadAllBytes("c1a0.bsp").ToArray();
-
-			BSPHEADER BSPHeader = BSPHEADER.FromBytes( bytes, 0 );
-
-			vertexList = new List<VECTOR3D>();
-			edgeList = new List<BSPEDGE>();
-			surfEdgeList = new List<BSPSURFEDGE>();
-			planeList = new List<BSPPLANE>();
-			faceList = new List<BSPFACE>();
-
-			// 113332 for snark_pit.bsp
-			long vertices_offset = BSPHeader.GetLump( LumpType.LUMP_VERTICES ).nOffset;
-			// 3812 for snark_pit.bsp
-			long vertices_length = BSPHeader.GetLump( LumpType.LUMP_VERTICES ).nLength / VECTOR3D.ByteSize;
-
-			for (int i = 0; i < vertices_length; i++)
-			{
-				VECTOR3D vector3d = VECTOR3D.FromBytes(bytes, Convert.ToInt32(vertices_offset) + (i * VECTOR3D.ByteSize));
-				vertexList.Add(vector3d);
-			}
-
-			// 380464 for snark_pit.bsp
-			long edges_offset = BSPHeader.GetLump( LumpType.LUMP_EDGES ).nOffset;
-			// 3365 for snark_pit.bsp
-			long edges_length = BSPHeader.GetLump( LumpType.LUMP_EDGES ).nLength / BSPEDGE.ByteSize;
-
-			for ( int i = 0; i < edges_length; i++ )
-			{
-				BSPEDGE bspEdge = BSPEDGE.FromBytes(bytes, Convert.ToInt32( edges_offset) + (i * BSPEDGE.ByteSize));
-				edgeList.Add(bspEdge);
-			}
-
-			long surfedges_offset = BSPHeader.GetLump( LumpType.LUMP_SURFEDGES ).nOffset;
-			long surfedges_length = BSPHeader.GetLump( LumpType.LUMP_SURFEDGES ).nLength / BSPSURFEDGE.ByteSize;
-
-			for ( int i = 0; i < surfedges_length; i++ )
-			{
-				BSPSURFEDGE bspSurfEdge = BSPSURFEDGE.FromBytes( bytes, Convert.ToInt32( surfedges_offset ) + (i * BSPSURFEDGE.ByteSize) );
-				surfEdgeList.Add( bspSurfEdge );
-			}
-
-			long planes_offset = BSPHeader.GetLump( LumpType.LUMP_PLANES ).nOffset;
-			long planes_length = BSPHeader.GetLump( LumpType.LUMP_PLANES ).nLength / BSPPLANE.ByteSize;
-
-			for ( int i = 0; i < planes_length; i++ )
-			{
-				BSPPLANE bspPlane = BSPPLANE.FromBytes( bytes, Convert.ToInt32( planes_offset ) + (i * BSPPLANE.ByteSize) );
-				planeList.Add( bspPlane );
-			}
-
-			long faces_offset = BSPHeader.GetLump( LumpType.LUMP_FACES ).nOffset;
-			long faces_length = BSPHeader.GetLump( LumpType.LUMP_FACES ).nLength / BSPFACE.ByteSize;
-
-			for ( int i = 0; i < faces_length; i++ )
-			{
-				BSPFACE bspFace = BSPFACE.FromBytes( bytes, Convert.ToInt32( faces_offset ) + (i * BSPFACE.ByteSize) );
-				faceList.Add( bspFace );
-			}
-		}
-
-		if ( Game.IsServer && Input.Down( InputButton.SecondaryAttack ) )
+		if ( !Game.IsServer && Input.Pressed( InputButton.PrimaryAttack ) )
 		{
-			foreach ( VECTOR3D vertex in vertexList )
-			{
-				vertex.z += 1;
-			}
-		}
+			BSPMapEntity mapEntity = BSPParser.CreateMapEntity( "c1a0.bsp" );
 
-		foreach ( VECTOR3D vertex in vertexList )
-		{
-			// DebugOverlay.Sphere( vertex.GetVector3(), 1, Color.Red );
-		}
-
-		foreach ( BSPEDGE bspEdge in edgeList )
-		{
-			int index1 = bspEdge.iVertex[0];
-			int index2 = bspEdge.iVertex[1];
-
-			VECTOR3D vertex1 = vertexList[index1];
-			VECTOR3D vertex2 = vertexList[index2];
-
-			DebugOverlay.Line( vertex1.GetVector3(), vertex2.GetVector3() );
+			mapEntity.Position = Position;
+			mapEntity.Spawn();
 		}
 	}
 
