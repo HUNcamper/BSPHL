@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sandbox
+namespace Sandbox.BSP
 {
-	public partial class BSPEntity : RenderEntity
+	public partial class BSPMapEntity : RenderEntity
 	{
 		public Material Material { get; set; }
 
@@ -26,12 +26,13 @@ namespace Sandbox
 
 		private List<VertexBuffer> vertexBufferList;
 
-		public BSPEntity()
+		public BSPMapEntity()
 		{
-			this.vertexBufferList = new();
+			vertexBufferList = new();
 
 			RenderBounds = new BBox( Position, 5000f );
 			Material = Material.Load( "materials/dev/debug_physics.vmat" );
+			// Material = Material.FromShader( "shaders/goldsrc_render.shader" );
 		}
 
 		public void Load()
@@ -55,11 +56,11 @@ namespace Sandbox
 
 				for ( int i = 0; i < face.nEdges; i++ )
 				{
-					int edgeIndex = Convert.ToInt32(face.iFirstEdge) + i;
+					int edgeIndex = Convert.ToInt32( face.iFirstEdge ) + i;
 					int vertexIndex = SurfEdgeList[edgeIndex].GetVertexIndex( EdgeList );
 					Vector3 vertexPos = VertexList[vertexIndex].GetVector3();
 
-					vertexBuffer.Add( new( vertexPos, Vector3.Zero, Vector3.Left, Vector4.One ) );
+					vertexBuffer.Add( new( vertexPos, Vector3.One, Vector3.Left, new Vector4( i * 0.2f, i * 0.2f, 1.0f, 1.0f ) ) );
 				}
 
 				vertexBufferList.Add( vertexBuffer );
